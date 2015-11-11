@@ -21,7 +21,10 @@ import android.os.Bundle;
 import android.provider.UserDictionary;
 import android.provider.UserDictionary.Words;
 import android.support.v7.app.ActionBarActivity;
+import android.util.Pair;
 import android.widget.TextView;
+
+import java.util.HashMap;
 
 /**
  * This is the central activity for the Provider Dictionary Example App. The purpose of this app is
@@ -42,5 +45,27 @@ public class MainActivity extends ActionBarActivity {
 
         // Get a Cursor containing all of the rows in the Words table
         Cursor cursor = resolver.query(UserDictionary.Words.CONTENT_URI, null, null, null, null);
+        StringBuilder sb = new StringBuilder();
+        int id = cursor.getColumnIndex(Words._ID);
+        int freq = cursor.getColumnIndex(Words.FREQUENCY);
+        int word = cursor.getColumnIndex(Words.WORD);
+
+        try {
+            sb.append("The are " + cursor.getCount() + " words in the user dictionary.\n");
+            while (cursor.moveToNext()) {
+                sb.append(String.valueOf(cursor.getPosition()));
+                sb.append(" - ID: ");
+                sb.append(cursor.getInt(id));
+                sb.append(" Freq: ");
+                sb.append(cursor.getInt(freq));
+                sb.append(" - ");
+                sb.append(cursor.getString(word));
+                sb.append("\n");
+            }
+        } finally {
+            cursor.close();
+        }
+
+        dictTextView.setText(sb.toString());
     }
 }
